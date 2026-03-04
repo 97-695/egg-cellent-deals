@@ -1,6 +1,22 @@
+import { useState } from "react";
 import { Search, Heart, ShoppingCart, User, MapPin } from "lucide-react";
 
 const StoreHeader = () => {
+  const [cep, setCep] = useState("");
+  const [cepConfirmed, setCepConfirmed] = useState(false);
+
+  const handleCepSubmit = () => {
+    if (cep.replace(/\D/g, "").length === 8) {
+      setCepConfirmed(true);
+    }
+  };
+
+  const formatCep = (value: string) => {
+    const digits = value.replace(/\D/g, "").slice(0, 8);
+    if (digits.length > 5) return `${digits.slice(0, 5)}-${digits.slice(5)}`;
+    return digits;
+  };
+
   return (
     <header className="w-full">
       {/* Top bar */}
@@ -10,13 +26,39 @@ const StoreHeader = () => {
             <span className="font-bold text-lg tracking-tight">americanas</span>
           </div>
           <div className="hidden md:flex items-center gap-4">
-            <span>entregue em 65726-140</span>
+            <div className="flex items-center gap-1">
+              <MapPin className="h-3 w-3" />
+              {cepConfirmed ? (
+                <span>
+                  entregue em {cep}{" "}
+                  <button onClick={() => setCepConfirmed(false)} className="underline ml-1">
+                    alterar
+                  </button>
+                </span>
+              ) : (
+                <div className="flex items-center gap-1">
+                  <input
+                    type="text"
+                    placeholder="digite seu CEP"
+                    value={cep}
+                    onChange={(e) => setCep(formatCep(e.target.value))}
+                    onKeyDown={(e) => e.key === "Enter" && handleCepSubmit()}
+                    className="bg-primary-foreground/20 text-primary-foreground placeholder:text-primary-foreground/60 rounded px-2 py-0.5 text-xs w-24 outline-none"
+                  />
+                  <button
+                    onClick={handleCepSubmit}
+                    className="bg-primary-foreground/20 hover:bg-primary-foreground/30 rounded px-2 py-0.5 text-xs transition-colors"
+                  >
+                    ok
+                  </button>
+                </div>
+              )}
+            </div>
             <span>baixe o app</span>
             <span>peça seu cartão</span>
             <span className="font-semibold">cliente ★</span>
             <span>mais vendidos</span>
             <span>nossas lojas</span>
-            <span>entrega rápida</span>
           </div>
         </div>
       </div>
@@ -43,22 +85,6 @@ const StoreHeader = () => {
               <span className="absolute -top-2 -right-2 bg-accent text-accent-foreground text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">0</span>
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Categories */}
-      <div className="bg-card border-b border-border px-4 py-2 overflow-x-auto scrollbar-hide">
-        <div className="mx-auto flex max-w-7xl items-center gap-6 text-xs text-muted-foreground whitespace-nowrap">
-          <span className="flex items-center gap-1"><MapPin className="h-3 w-3" /> todos os departamentos</span>
-          <span>mercado</span>
-          <span>climatização</span>
-          <span>calçados</span>
-          <span>eletrodomésticos</span>
-          <span>informática</span>
-          <span>áudio e vídeo</span>
-          <span>eletropartáteis</span>
-          <span>móveis</span>
-          <span className="text-primary font-semibold">Páscoa</span>
         </div>
       </div>
     </header>
