@@ -1,6 +1,6 @@
 import { Star, Truck, Clock } from "lucide-react";
 import type { Product } from "@/data/products";
-import { productImages } from "@/data/productImages";
+import { productImagesById } from "@/data/productImages";
 
 interface ProductCardProps {
   product: Product;
