@@ -63,7 +63,7 @@ const PromoWheel = ({ onClose }: PromoWheelProps) => {
       ctx.rotate(startAngle + (segmentAngle * Math.PI) / 360);
       ctx.textAlign = "right";
       ctx.fillStyle = "#fff";
-      ctx.font = "bold 11px 'Open Sans', sans-serif";
+      ctx.font = "bold 13px 'Open Sans', sans-serif";
       ctx.fillText(seg.label, radius - 15, 5);
       ctx.restore();
     });
