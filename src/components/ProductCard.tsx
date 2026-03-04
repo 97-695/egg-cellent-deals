@@ -1,6 +1,6 @@
 import { Star, Truck, Clock } from "lucide-react";
 import type { Product } from "@/data/products";
-import { productImages } from "@/data/productImages";
+import { productImagesById } from "@/data/productImages";
 
 interface ProductCardProps {
   product: Product;
@@ -9,7 +9,7 @@ interface ProductCardProps {
 
 const ProductCard = ({ product, promoActive }: ProductCardProps) => {
   const displayPrice = promoActive ? product.price : product.price;
-  const imgSrc = productImages[product.brand] || productImages["default"];
+  const imgSrc = productImagesById[product.id];
 
   return (
     <div className="bg-card rounded-lg border border-border p-3 flex flex-col hover:shadow-md transition-shadow relative group">
