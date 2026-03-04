@@ -3,14 +3,14 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
 const segments = [
-  { label: "10% OFF", color: "hsl(var(--promo-green))" },
-  { label: "2 POR 1! 🎉", color: "hsl(var(--primary))" },
-  { label: "Frete Grátis", color: "hsl(var(--promo-blue))" },
-  { label: "15% OFF", color: "hsl(var(--promo-orange))" },
-  { label: "2 POR 1! 🎉", color: "hsl(var(--promo-pink))" },
-  { label: "5% OFF", color: "hsl(var(--promo-purple))" },
-  { label: "2 POR 1! 🎉", color: "hsl(var(--primary))" },
-  { label: "Brinde", color: "hsl(var(--promo-teal))" },
+  { label: "10% OFF", color: "#e74c3c" },
+  { label: "2 POR 1! 🎉", color: "#2ecc71" },
+  { label: "Frete Grátis", color: "#3498db" },
+  { label: "15% OFF", color: "#f39c12" },
+  { label: "30% OFF", color: "#9b59b6" },
+  { label: "40% OFF", color: "#e67e22" },
+  { label: "2 POR 1! 🎉", color: "#1abc9c" },
+  { label: "Brinde Especial", color: "#e91e63" },
 ];
 
 interface PromoWheelProps {
