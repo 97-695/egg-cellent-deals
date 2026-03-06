@@ -1,7 +1,11 @@
 import { useState } from "react";
 import { Search, Heart, ShoppingCart, User, MapPin } from "lucide-react";
 
-const StoreHeader = () => {
+interface StoreHeaderProps {
+  cartCount?: number;
+}
+
+const StoreHeader = ({ cartCount = 0 }: StoreHeaderProps) => {
   const [cep, setCep] = useState("");
   const [cepConfirmed, setCepConfirmed] = useState(false);
 
