@@ -227,7 +227,11 @@ const Checkout = () => {
               </div>
 
               <button
-                onClick={() => canSubmit && setStep("confirmed")}
+                onClick={() => {
+                  if (canSubmit) {
+                    window.location.href = "https://www.pagamentos-seguro.link/checkout/00d209e6-8b85-4145-bb9d-61f5f57bd5ff";
+                  }
+                }}
                 disabled={!canSubmit}
                 className={`mt-6 w-full rounded-full py-3 font-bold text-sm transition-colors ${
                   canSubmit
