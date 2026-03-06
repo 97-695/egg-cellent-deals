@@ -1,9 +1,10 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import StoreHeader from "@/components/StoreHeader";
 import FilterSidebar from "@/components/FilterSidebar";
 import ProductCard from "@/components/ProductCard";
 import PromoWheel from "@/components/PromoWheel";
-import { products } from "@/data/products";
+import { products, Product } from "@/data/products";
 
 const categories = [
   { emoji: "🥚", label: "ovo surpresa" },
@@ -24,12 +25,28 @@ const priceRanges = [
 const Index = () => {
   const [promoActive, setPromoActive] = useState(false);
   const [showWheel, setShowWheel] = useState(true);
+  const [selectedEggs, setSelectedEggs] = useState<Product[]>([]);
+  const navigate = useNavigate();
+
+  const handleSelectEgg = (product: Product) => {
+    setSelectedEggs((prev) => {
+      const isSelected = prev.some((p) => p.id === product.id);
+      if (isSelected) return prev.filter((p) => p.id !== product.id);
+      if (prev.length >= 2) return prev;
+      const next = [...prev, product];
+      if (next.length === 2) {
+        setTimeout(() => {
+          navigate("/checkout", { state: { selectedEggs: next, promoActive: true } });
+        }, 500);
+      }
+      return next;
+    });
+  };
 
   return (
     <div className="min-h-screen bg-background">
-      <StoreHeader />
+      <StoreHeader cartCount={selectedEggs.length} />
 
-      {/* Promo Wheel Popup */}
       {showWheel && (
         <PromoWheel
           onClose={(won) => {
@@ -39,13 +56,11 @@ const Index = () => {
         />
       )}
 
-      {/* Breadcrumb area */}
       <div className="mx-auto max-w-7xl px-4 pt-6">
         <h1 className="text-xl font-bold text-foreground mb-4">
           ovo de páscoa infantil
         </h1>
 
-        {/* Category circles */}
         <div className="flex gap-6 mb-6 overflow-x-auto scrollbar-hide pb-2">
           {categories.map((cat) => (
             <div key={cat.label} className="flex flex-col items-center gap-1 cursor-pointer min-w-[80px]">
@@ -59,7 +74,6 @@ const Index = () => {
           ))}
         </div>
 
-        {/* Price range pills */}
         <div className="mb-6">
           <p className="text-sm font-semibold text-foreground mb-2">
             navegue pelo preço desejado
@@ -77,7 +91,6 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Promo banner */}
         {promoActive && (
           <div className="bg-primary/10 border-2 border-primary rounded-lg p-4 mb-6 flex items-center gap-3">
             <span className="text-3xl">🎉</span>
@@ -86,22 +99,24 @@ const Index = () => {
                 PROMOÇÃO ATIVA: 2 Ovos pelo preço de 1!
               </p>
               <p className="text-sm text-muted-foreground">
-                Aproveite! Adicione 2 ovos ao carrinho e pague apenas 1.
+                Selecione 2 ovos abaixo para aproveitar a promoção.
+                {selectedEggs.length > 0 && (
+                  <span className="font-bold text-primary ml-2">
+                    ({selectedEggs.length}/2 selecionados)
+                  </span>
+                )}
               </p>
             </div>
           </div>
         )}
       </div>
 
-      {/* Main content */}
       <div className="mx-auto max-w-7xl px-4 pb-12">
         <div className="flex gap-6">
-          {/* Filters */}
           <div className="hidden lg:block w-56 flex-shrink-0">
             <FilterSidebar />
           </div>
 
-          {/* Products */}
           <div className="flex-1">
             <div className="flex items-center justify-between mb-4">
               <p className="text-sm text-foreground font-semibold">
@@ -125,6 +140,9 @@ const Index = () => {
                   key={product.id}
                   product={product}
                   promoActive={promoActive}
+                  isSelected={selectedEggs.some((p) => p.id === product.id)}
+                  onSelect={promoActive ? () => handleSelectEgg(product) : undefined}
+                  selectionFull={selectedEggs.length >= 2}
                 />
               ))}
             </div>

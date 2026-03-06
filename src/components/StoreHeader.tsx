@@ -86,7 +86,7 @@ const StoreHeader = ({ cartCount = 0 }: StoreHeaderProps) => {
             <Heart className="h-5 w-5" />
             <div className="relative">
               <ShoppingCart className="h-5 w-5" />
-              <span className="absolute -top-2 -right-2 bg-accent text-accent-foreground text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">0</span>
+              <span className="absolute -top-2 -right-2 bg-accent text-accent-foreground text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">{cartCount}</span>
             </div>
           </div>
         </div>
