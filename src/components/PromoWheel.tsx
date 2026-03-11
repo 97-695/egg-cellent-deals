@@ -75,7 +75,7 @@ const PromoWheel = ({ onClose }: PromoWheelProps) => {
     ctx.arc(center, center, 20, 0, 2 * Math.PI);
     ctx.fillStyle = "#fff";
     ctx.fill();
-    ctx.strokeStyle = "hsl(var(--border))";
+    ctx.strokeStyle = "#ccc";
     ctx.lineWidth = 2;
     ctx.stroke();
   }, [rotation]);
