@@ -1,17 +1,19 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
 const segments = [
-  { label: "10% OFF", color: "#e74c3c" },
-  { label: "2 POR 1! 🎉", color: "#2ecc71" },
-  { label: "Frete Grátis", color: "#3498db" },
-  { label: "15% OFF", color: "#f39c12" },
-  { label: "30% OFF", color: "#9b59b6" },
-  { label: "40% OFF", color: "#e67e22" },
-  { label: "2 POR 1! 🎉", color: "#1abc9c" },
-  { label: "Brinde Especial", color: "#e91e63" },
+  { label: "10% OFF", color: "#e74c3c", emoji: "🥚" },
+  { label: "2 POR 1! 🎉", color: "#2ecc71", emoji: "🐰" },
+  { label: "Frete Grátis", color: "#3498db", emoji: "📦" },
+  { label: "15% OFF", color: "#f39c12", emoji: "🌷" },
+  { label: "30% OFF", color: "#9b59b6", emoji: "🎀" },
+  { label: "40% OFF", color: "#e67e22", emoji: "🍫" },
+  { label: "2 POR 1! 🎉", color: "#1abc9c", emoji: "🐣" },
+  { label: "Brinde Especial", color: "#e91e63", emoji: "🎁" },
 ];
+
+const SEGMENT_ANGLE = 360 / segments.length; // 45deg
 
 interface PromoWheelProps {
   onClose: (won: boolean) => void;
@@ -21,162 +23,194 @@ const PromoWheel = ({ onClose }: PromoWheelProps) => {
   const [open, setOpen] = useState(true);
   const [spinning, setSpinning] = useState(false);
   const [result, setResult] = useState<string | null>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [rotation, setRotation] = useState(0);
+  const [wheelRotation, setWheelRotation] = useState(0);
 
-  const segmentAngle = 360 / segments.length;
-
-  // Draw wheel
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const size = canvas.width;
-    const center = size / 2;
-    const radius = center - 10;
-
-    ctx.clearRect(0, 0, size, size);
-    ctx.save();
-    ctx.translate(center, center);
-    ctx.rotate((rotation * Math.PI) / 180);
-    ctx.translate(-center, -center);
-
-    segments.forEach((seg, i) => {
-      const startAngle = (i * segmentAngle * Math.PI) / 180;
-      const endAngle = ((i + 1) * segmentAngle * Math.PI) / 180;
-
-      ctx.beginPath();
-      ctx.moveTo(center, center);
-      ctx.arc(center, center, radius, startAngle, endAngle);
-      ctx.closePath();
-      ctx.fillStyle = seg.color;
-      ctx.fill();
-      ctx.strokeStyle = "#fff";
-      ctx.lineWidth = 2;
-      ctx.stroke();
-
-      // Text
-      ctx.save();
-      ctx.translate(center, center);
-      ctx.rotate(startAngle + (segmentAngle * Math.PI) / 360);
-      ctx.textAlign = "right";
-      ctx.fillStyle = "#fff";
-      ctx.font = "bold 13px 'Open Sans', sans-serif";
-      ctx.fillText(seg.label, radius - 15, 5);
-      ctx.restore();
-    });
-
-    ctx.restore();
-
-    // Center circle
-    ctx.beginPath();
-    ctx.arc(center, center, 20, 0, 2 * Math.PI);
-    ctx.fillStyle = "#fff";
-    ctx.fill();
-    ctx.strokeStyle = "#ccc";
-    ctx.lineWidth = 2;
-    ctx.stroke();
-  }, [rotation]);
-
-  const spin = () => {
+  const spin = useCallback(() => {
     if (spinning) return;
     setSpinning(true);
 
-    // Always land on segment index 1 ("2 POR 1! 🎉")
-    // Segment 1 center is at 1.5 * segmentAngle = 67.5 degrees
-    // The pointer is at the top (270 degrees in canvas coords, or effectively 0 degrees since we read from top)
-    // We need the wheel to stop so segment 1 is at the pointer
-    // Pointer is at right (0°), segment 1 center is at segmentAngle * 1.5
-    // Final rotation should place segment 1 at 0°: 360 - (segmentAngle * 1.5)
-    const targetOffset = 360 - segmentAngle * 1.5;
-    const totalSpins = 5; // full rotations
-    const finalDegrees = totalSpins * 360 + targetOffset;
+    // Land on segment index 1 ("2 POR 1! 🎉")
+    // Pointer is at top (0°/360°). Segment 1 center = 1.5 * 45 = 67.5°
+    // We need to rotate so that segment 1 aligns with top
+    // rotation = fullSpins + (360 - 67.5) = fullSpins + 292.5
+    const finalRotation = 5 * 360 + 292.5;
+    setWheelRotation(finalRotation);
 
-    let start: number | null = null;
-    const duration = 4000;
-
-    const animate = (timestamp: number) => {
-      if (!start) start = timestamp;
-      const elapsed = timestamp - start;
-      const progress = Math.min(elapsed / duration, 1);
-
-      // Ease out cubic
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setRotation(eased * finalDegrees);
-
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      } else {
-        setSpinning(false);
-        setResult("2 POR 1! 🎉");
-      }
-    };
-
-    requestAnimationFrame(animate);
-  };
+    setTimeout(() => {
+      setSpinning(false);
+      setResult("2 POR 1! 🎉");
+    }, 4000);
+  }, [spinning]);
 
   const handleClaim = () => {
     setOpen(false);
     onClose(true);
   };
 
+  // Build conic-gradient
+  const conicStops = segments
+    .map((seg, i) => {
+      const start = i * SEGMENT_ANGLE;
+      const end = (i + 1) * SEGMENT_ANGLE;
+      return `${seg.color} ${start}deg ${end}deg`;
+    })
+    .join(", ");
+
   return (
-    <Dialog open={open} onOpenChange={(v) => { if (!v) { setOpen(false); onClose(!!result); } }}>
-      <DialogContent className="sm:max-w-md p-0 overflow-hidden border-0 bg-gradient-to-b from-primary to-primary/90">
-        <div className="p-6 text-center">
+    <Dialog
+      open={open}
+      onOpenChange={(v) => {
+        if (!v) {
+          setOpen(false);
+          onClose(!!result);
+        }
+      }}
+    >
+      <DialogContent className="sm:max-w-[420px] p-0 overflow-hidden border-0 bg-gradient-to-b from-[#4a1a6b] to-[#2d1045] rounded-2xl">
+        <div className="p-6 text-center relative overflow-hidden">
+          {/* Floating Easter decorations */}
+          <div className="absolute top-2 left-4 text-3xl opacity-60 animate-bounce" style={{ animationDelay: "0s" }}>🐰</div>
+          <div className="absolute top-8 right-6 text-2xl opacity-50 animate-bounce" style={{ animationDelay: "0.5s" }}>🥚</div>
+          <div className="absolute bottom-20 left-6 text-2xl opacity-40 animate-bounce" style={{ animationDelay: "1s" }}>🌷</div>
+          <div className="absolute bottom-16 right-4 text-3xl opacity-50 animate-bounce" style={{ animationDelay: "0.3s" }}>🐣</div>
+
           {/* Header */}
-          <div className="mb-4">
-            <span className="text-4xl">🐰</span>
-            <h2 className="text-xl font-extrabold text-primary-foreground mt-2">
+          <div className="mb-5 relative z-10">
+            <div className="text-5xl mb-1">🐰🥚🐣</div>
+            <h2 className="text-2xl font-extrabold text-yellow-300 mt-2 drop-shadow-lg"
+              style={{ textShadow: "0 2px 10px rgba(255,200,0,0.5)" }}>
               PROMOÇÃO DE PÁSCOA!
             </h2>
-            <p className="text-primary-foreground/80 text-sm mt-1">
-              Gire a roleta e ganhe um desconto especial!
+            <p className="text-white/80 text-sm mt-1">
+              Gire a roleta e ganhe um desconto especial! 🎉
             </p>
           </div>
 
-          {/* Wheel */}
-          <div className="relative inline-block mb-4">
-            {/* Pointer */}
-            <div className="absolute right-[-5px] top-1/2 -translate-y-1/2 z-10 text-2xl">
-              ▶
-            </div>
-            <canvas
-              ref={canvasRef}
-              width={280}
-              height={280}
-              className="rounded-full shadow-lg"
+          {/* Wheel container */}
+          <div className="relative inline-flex items-center justify-center mb-5">
+            {/* Outer glow ring */}
+            <div className="absolute w-[300px] h-[300px] rounded-full"
+              style={{
+                background: "conic-gradient(from 0deg, #ffd700, #ff6b6b, #ffd700, #ff6b6b, #ffd700)",
+                filter: "blur(8px)",
+                opacity: 0.4,
+              }}
             />
+
+            {/* Pointer at top */}
+            <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-20 drop-shadow-lg">
+              <div
+                className="w-0 h-0"
+                style={{
+                  borderLeft: "14px solid transparent",
+                  borderRight: "14px solid transparent",
+                  borderTop: "28px solid #ffd700",
+                  filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.4))",
+                }}
+              />
+            </div>
+
+            {/* Wheel */}
+            <div
+              className="relative w-[280px] h-[280px] rounded-full border-4 border-yellow-400 shadow-2xl overflow-hidden"
+              style={{
+                background: `conic-gradient(${conicStops})`,
+                transform: `rotate(${wheelRotation}deg)`,
+                transition: spinning
+                  ? "transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)"
+                  : "none",
+              }}
+            >
+              {/* Segment labels */}
+              {segments.map((seg, i) => {
+                const angle = i * SEGMENT_ANGLE + SEGMENT_ANGLE / 2;
+                return (
+                  <div
+                    key={i}
+                    className="absolute top-0 left-0 w-full h-full"
+                    style={{
+                      transform: `rotate(${angle}deg)`,
+                    }}
+                  >
+                    <div
+                      className="absolute left-1/2 top-[12px] -translate-x-1/2 flex flex-col items-center"
+                      style={{
+                        transformOrigin: "center center",
+                      }}
+                    >
+                      <span className="text-lg">{seg.emoji}</span>
+                      <span
+                        className="text-[10px] font-bold text-white whitespace-nowrap"
+                        style={{
+                          textShadow: "0 1px 3px rgba(0,0,0,0.7)",
+                        }}
+                      >
+                        {seg.label}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+
+              {/* Segment lines */}
+              {segments.map((_, i) => (
+                <div
+                  key={`line-${i}`}
+                  className="absolute top-0 left-1/2 w-[1px] h-1/2 bg-white/30 origin-bottom"
+                  style={{ transform: `rotate(${i * SEGMENT_ANGLE}deg)` }}
+                />
+              ))}
+
+              {/* Center circle */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-gradient-to-br from-yellow-300 to-yellow-500 border-4 border-white shadow-lg flex items-center justify-center">
+                <span className="text-2xl">🐰</span>
+              </div>
+            </div>
           </div>
 
           {/* Result or Spin button */}
-          {result ? (
-            <div className="space-y-3">
-              <div className="bg-card rounded-lg p-4">
-                <p className="text-sm text-muted-foreground">Você ganhou:</p>
-                <p className="text-2xl font-extrabold text-primary">{result}</p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Leve 2 ovos de Páscoa pelo preço de 1!
-                </p>
+          <div className="relative z-10">
+            {result ? (
+              <div className="space-y-3 animate-fade-in">
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-yellow-400/30">
+                  <p className="text-white/70 text-sm">🎊 Você ganhou:</p>
+                  <p className="text-3xl font-extrabold text-yellow-300 mt-1"
+                    style={{ textShadow: "0 2px 10px rgba(255,200,0,0.5)" }}>
+                    {result}
+                  </p>
+                  <p className="text-white/60 text-xs mt-2">
+                    Leve 2 ovos de Páscoa pelo preço de 1! 🍫🥚
+                  </p>
+                </div>
+                <Button
+                  onClick={handleClaim}
+                  className="w-full font-bold text-lg py-6 rounded-xl border-0"
+                  style={{
+                    background: "linear-gradient(135deg, #ffd700, #ff8c00)",
+                    color: "#2d1045",
+                    boxShadow: "0 4px 20px rgba(255,200,0,0.4)",
+                  }}
+                >
+                  🎉 RESGATAR PROMOÇÃO
+                </Button>
               </div>
+            ) : (
               <Button
-                onClick={handleClaim}
-                className="w-full bg-accent text-accent-foreground font-bold text-lg py-6 hover:bg-accent/90"
+                onClick={spin}
+                disabled={spinning}
+                className="w-full font-bold text-lg py-6 rounded-xl border-0 disabled:opacity-70"
+                style={{
+                  background: spinning
+                    ? "linear-gradient(135deg, #888, #666)"
+                    : "linear-gradient(135deg, #ffd700, #ff8c00)",
+                  color: spinning ? "#fff" : "#2d1045",
+                  boxShadow: spinning ? "none" : "0 4px 20px rgba(255,200,0,0.4)",
+                }}
               >
-                🎉 RESGATAR PROMOÇÃO
+                {spinning ? "🎰 Girando..." : "🎰 GIRAR A ROLETA!"}
               </Button>
-            </div>
-          ) : (
-            <Button
-              onClick={spin}
-              disabled={spinning}
-              className="w-full bg-accent text-accent-foreground font-bold text-lg py-6 hover:bg-accent/90 disabled:opacity-70"
-            >
-              {spinning ? "Girando..." : "🎰 GIRAR A ROLETA!"}
-            </Button>
-          )}
+            )}
+          </div>
         </div>
       </DialogContent>
     </Dialog>
