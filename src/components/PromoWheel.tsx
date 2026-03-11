@@ -66,7 +66,7 @@ const PromoWheel = ({ onClose }: PromoWheelProps) => {
         }
       }}
     >
-      <DialogContent className="sm:max-w-[420px] p-0 overflow-hidden border-0 bg-gradient-to-b from-[#4a1a6b] to-[#2d1045] rounded-2xl">
+      <DialogContent className="sm:max-w-[420px] p-0 overflow-hidden border-0 bg-gradient-to-b from-[#4a1a6b] to-[#2d1045] rounded-2xl [&>button]:hidden">
         <div className="p-6 text-center relative overflow-hidden">
           {/* Floating Easter decorations */}
           <div className="absolute top-2 left-4 text-3xl opacity-60 animate-bounce" style={{ animationDelay: "0s" }}>🐰</div>
