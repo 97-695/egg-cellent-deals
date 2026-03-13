@@ -96,15 +96,10 @@ const Index = () => {
             <span className="text-3xl">🎉</span>
             <div>
               <p className="font-bold text-primary text-lg">
-                PROMOÇÃO ATIVA: 2 Ovos pelo preço de 1!
+                PROMOÇÃO ATIVA: 60% OFF em qualquer produto!
               </p>
               <p className="text-sm text-muted-foreground">
-                Selecione 2 ovos abaixo para aproveitar a promoção.
-                {selectedEggs.length > 0 && (
-                  <span className="font-bold text-primary ml-2">
-                    ({selectedEggs.length}/2 selecionados)
-                  </span>
-                )}
+                Selecione um ovo para aproveitar o desconto de 60%.
               </p>
             </div>
           </div>

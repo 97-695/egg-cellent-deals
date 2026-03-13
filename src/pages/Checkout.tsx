@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import StoreHeader from "@/components/StoreHeader";
 import { Product } from "@/data/products";
 import { productImagesById } from "@/data/productImages";
-import { MapPin, CreditCard, Truck, ArrowLeft, CheckCircle2 } from "lucide-react";
+import { MapPin, CreditCard, ArrowLeft, CheckCircle2 } from "lucide-react";
 
 const Checkout = () => {
   const location = useLocation();
@@ -43,8 +43,8 @@ const Checkout = () => {
   };
 
   const totalOriginal = selectedEggs.reduce((sum, e) => sum + e.price, 0);
-  const totalPromo = promoActive && selectedEggs.length === 2
-    ? 55.90
+  const totalPromo = promoActive
+    ? totalOriginal * 0.4
     : totalOriginal;
 
   const canSubmit = form.nome && form.cep.replace(/\D/g, "").length === 8 && form.rua && form.numero && form.bairro && form.cidade && form.estado && form.telefone;
@@ -204,22 +204,18 @@ const Checkout = () => {
               ))}
 
               <div className="border-t border-border pt-4 mt-2 space-y-2">
-                {promoActive && selectedEggs.length === 2 && (
+                {promoActive && (
                   <>
                     <div className="flex justify-between text-sm text-muted-foreground">
                       <span>Subtotal</span>
                       <span className="line-through">R$ {totalOriginal.toFixed(2).replace(".", ",")}</span>
                     </div>
                     <div className="flex justify-between text-sm text-primary font-bold">
-                      <span>🎉 Desconto 2 por 1</span>
+                      <span>🎉 Desconto 60% OFF</span>
                       <span>- R$ {(totalOriginal - totalPromo).toFixed(2).replace(".", ",")}</span>
                     </div>
                   </>
                 )}
-                <div className="flex items-center gap-1 text-xs text-success">
-                  <Truck className="h-3 w-3" />
-                  <span>Frete grátis</span>
-                </div>
                 <div className="flex justify-between text-lg font-bold text-foreground pt-2 border-t border-border">
                   <span>Total</span>
                   <span>R$ {totalPromo.toFixed(2).replace(".", ",")}</span>
