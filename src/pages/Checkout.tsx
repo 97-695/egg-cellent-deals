@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import StoreHeader from "@/components/StoreHeader";
 import { Product } from "@/data/products";
 import { productImagesById } from "@/data/productImages";
-import { MapPin, CreditCard, Truck, ArrowLeft, CheckCircle2 } from "lucide-react";
+import { MapPin, CreditCard, ArrowLeft, CheckCircle2 } from "lucide-react";
 
 const Checkout = () => {
   const location = useLocation();
