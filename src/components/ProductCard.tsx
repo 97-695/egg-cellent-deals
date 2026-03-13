@@ -68,7 +68,7 @@ const ProductCard = ({ product, promoActive, isSelected, onSelect, selectionFull
       <div className="mt-auto">
         {promoActive && (
           <div className="bg-primary/10 border border-primary rounded px-2 py-1 mb-2">
-            <span className="text-[10px] font-bold text-primary">🎉 PROMOÇÃO: 2 ovos pelo preço de 1!</span>
+            <span className="text-[10px] font-bold text-primary">🎉 60% OFF neste produto!</span>
           </div>
         )}
         <p className="text-lg font-bold text-foreground">
