@@ -176,7 +176,7 @@ const PromoWheel = ({ onClose }: PromoWheelProps) => {
                     {result}
                   </p>
                   <p className="text-white/60 text-xs mt-2">
-                    Leve 2 ovos de Páscoa pelo preço de 1! 🍫🥚
+                    60% de desconto em qualquer produto! 🍫🥚
                   </p>
                 </div>
                 <Button
