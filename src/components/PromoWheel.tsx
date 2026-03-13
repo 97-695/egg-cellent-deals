@@ -4,12 +4,12 @@ import { Button } from "@/components/ui/button";
 
 const segments = [
   { label: "10% OFF", color: "#e74c3c", emoji: "🥚" },
-  { label: "2 POR 1! 🎉", color: "#2ecc71", emoji: "🐰" },
+  { label: "60% OFF! 🎉", color: "#2ecc71", emoji: "🐰" },
   { label: "Frete Grátis", color: "#3498db", emoji: "📦" },
   { label: "15% OFF", color: "#f39c12", emoji: "🌷" },
   { label: "30% OFF", color: "#9b59b6", emoji: "🎀" },
   { label: "40% OFF", color: "#e67e22", emoji: "🍫" },
-  { label: "2 POR 1! 🎉", color: "#1abc9c", emoji: "🐣" },
+  { label: "5% OFF", color: "#1abc9c", emoji: "🐣" },
   { label: "Brinde Especial", color: "#e91e63", emoji: "🎁" },
 ];
 
@@ -29,16 +29,13 @@ const PromoWheel = ({ onClose }: PromoWheelProps) => {
     if (spinning) return;
     setSpinning(true);
 
-    // Land on segment index 1 ("2 POR 1! 🎉")
-    // Pointer is at top (0°/360°). Segment 1 center = 1.5 * 45 = 67.5°
-    // We need to rotate so that segment 1 aligns with top
-    // rotation = fullSpins + (360 - 67.5) = fullSpins + 292.5
+    // Land on segment index 1 ("60% OFF! 🎉")
     const finalRotation = 5 * 360 + 292.5;
     setWheelRotation(finalRotation);
 
     setTimeout(() => {
       setSpinning(false);
-      setResult("2 POR 1! 🎉");
+      setResult("60% OFF! 🎉");
     }, 4000);
   }, [spinning]);
 
