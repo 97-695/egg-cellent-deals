@@ -44,7 +44,7 @@ const Checkout = () => {
 
   const totalOriginal = selectedEggs.reduce((sum, e) => sum + e.price, 0);
   const totalPromo = promoActive && selectedEggs.length === 2
-    ? 99.90
+    ? 55.90
     : totalOriginal;
 
   const canSubmit = form.nome && form.cep.replace(/\D/g, "").length === 8 && form.rua && form.numero && form.bairro && form.cidade && form.estado && form.telefone;
