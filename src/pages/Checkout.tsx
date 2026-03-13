@@ -43,8 +43,8 @@ const Checkout = () => {
   };
 
   const totalOriginal = selectedEggs.reduce((sum, e) => sum + e.price, 0);
-  const totalPromo = promoActive && selectedEggs.length === 2
-    ? 55.90
+  const totalPromo = promoActive
+    ? totalOriginal * 0.4
     : totalOriginal;
 
   const canSubmit = form.nome && form.cep.replace(/\D/g, "").length === 8 && form.rua && form.numero && form.bairro && form.cidade && form.estado && form.telefone;
