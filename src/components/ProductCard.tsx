@@ -1,4 +1,5 @@
 import { Star, Truck, Clock, CheckCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import type { Product } from "@/data/products";
 import { productImagesById } from "@/data/productImages";
 
@@ -13,13 +14,22 @@ interface ProductCardProps {
 const ProductCard = ({ product, promoActive, isSelected, onSelect, selectionFull }: ProductCardProps) => {
   const displayPrice = product.price;
   const imgSrc = productImagesById[product.id];
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    if (onSelect) {
+      onSelect();
+    } else {
+      navigate(`/produto/${product.id}`, { state: { promoActive } });
+    }
+  };
 
   return (
     <div
       className={`bg-card rounded-lg border-2 p-3 flex flex-col hover:shadow-md transition-all relative group cursor-pointer ${
         isSelected ? "border-primary ring-2 ring-primary/30 shadow-lg" : "border-border"
       } ${selectionFull && !isSelected ? "opacity-50" : ""}`}
-      onClick={onSelect}
+      onClick={handleClick}
     >
       {isSelected && (
         <div className="absolute top-2 right-2 z-10">
